@@ -177,7 +177,18 @@ report with summary cards and aligned backend/frontend test tables.
 Run the
 backend and frontend test commands first so the source reports are current.
 
-## 8. Known limitations
+## 8. Assumptions and known limitations
+
+Assumptions:
+
+- `X` always starts a new game.
+- In Computer mode, the human is `X` and the computer is `O`.
+- Rows and columns are zero-based values from `0` to `2`.
+- Completed games cannot be undone.
+- Resetting a game preserves the session scoreboard.
+- The API is intended for one local in-memory session.
+
+Known limitations:
 
 - Game and scoreboard data are lost when the API process restarts.
 - There is no authentication, authorization, persistent database, or multi-user isolation.
@@ -185,11 +196,39 @@ backend and frontend test commands first so the source reports are current.
 - The API and frontend are configured for local development rather than production deployment.
 - No automated browser end-to-end test suite is included.
 
-## 9. Verification checklist
+## 9. Prompt summary and AI workflow
 
-- [ ] Start both local processes and create each mode.
-- [ ] Verify valid turns, occupied/out-of-range/wrong-player errors, and history.
-- [ ] Verify all rows, columns, diagonals, draw, highlights, and post-completion lock.
+Development followed a spec-driven workflow using GitHub Spec Kit. The project
+artifacts are stored in `specs/001-tic-tac-toe-application/`:
+
+- `spec.md` defines the scope, user stories, acceptance scenarios, and behavior
+	requirements.
+- `plan.md` defines the technical context, architecture, project structure, and
+	design constraints for the Angular and .NET applications.
+- `tasks.md` breaks the work into implementation and testing tasks grouped by
+	project foundation and user story.
+
+AI assistance was used during the spec-driven workflow to refine requirements,
+derive the implementation plan, generate focused code and tests, and review the
+result against the acceptance scenarios. Prompts emphasized backend-authoritative
+game state, exact API contracts, deterministic computer behavior, unchanged state
+after rejected moves, mode-specific undo, scoreboard correctness, CORS, and
+local run instructions.
+
+The completed implementation was validated with the backend and frontend unit
+test suites and the generated HTML test report.
+
+## 10. Verification checklist
+
+- [ ] Start the Angular application locally at `http://localhost:4200`.
+- [ ] Start the .NET API locally at `http://localhost:5050`.
+- [ ] Confirm frontend actions communicate with the backend through REST APIs.
+- [ ] Create a new game in both TwoPlayer and Computer modes.
+- [ ] Verify turns alternate correctly and invalid moves leave state unchanged.
+- [ ] Verify occupied, out-of-range, wrong-player, and completed-game errors.
+- [ ] Verify row, column, and diagonal wins, draw detection, and post-completion lock.
+- [ ] Verify winning cells are highlighted and move history is shown chronologically.
 - [ ] Verify computer winning/blocking/center/corner/fallback behavior.
 - [ ] Verify both undo behaviors and completed-game disablement.
-- [ ] Verify game reset preserves scoreboard and scoreboard reset preserves game.
+- [ ] Verify scoreboard updates, Reset Game, and Reset Scoreboard behavior.
+- [ ] Run the backend and frontend unit test commands and review the HTML report.
