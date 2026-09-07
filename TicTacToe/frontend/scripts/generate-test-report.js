@@ -108,8 +108,9 @@ function renderSection(title, tests) {
       </div>
       <div class="table-wrap">
         <table>
+          <colgroup><col class="col-number"><col class="col-name"><col class="col-suite"><col class="col-status"><col class="col-duration"></colgroup>
           <thead>
-            <tr><th>#</th><th>Test method</th><th>Suite</th><th>Status</th><th>Duration</th></tr>
+            <tr><th class="number">#</th><th>Test method</th><th>Suite</th><th class="status-column">Status</th><th class="duration">Duration</th></tr>
           </thead>
           <tbody>${renderRows(tests)}</tbody>
         </table>
@@ -150,19 +151,27 @@ const report = `<!doctype html>
     .section-heading .eyebrow { margin: 0 0 7px; }
     .section-heading strong { color: var(--teal); font: 700 14px/1.2 Arial, sans-serif; white-space: nowrap; }
     .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; }
+    table { width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; table-layout: fixed; }
+    .col-number { width: 7%; }
+    .col-name { width: 47%; }
+    .col-suite { width: 21%; }
+    .col-status { width: 14%; }
+    .col-duration { width: 11%; }
     th { background: #f4f8f7; color: var(--muted); font-size: 11px; letter-spacing: .08em; text-align: left; text-transform: uppercase; }
     th, td { border-bottom: 1px solid var(--line); padding: 12px 16px; vertical-align: middle; }
     tbody tr:last-child td { border-bottom: 0; }
     tbody tr:hover { background: #fbfdfc; }
-    .number, .duration { color: var(--muted); text-align: right; white-space: nowrap; }
-    .test-name { min-width: 300px; font-weight: 600; }
-    .status { display: inline-block; min-width: 70px; padding: 4px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; text-align: center; }
+    .number, .duration { color: var(--muted); white-space: nowrap; }
+    .number { text-align: center; }
+    .duration { text-align: right; }
+    .status-column, td:nth-child(4) { text-align: center; }
+    .test-name { overflow-wrap: anywhere; font-weight: 600; }
+    .status { display: inline-block; min-width: 76px; padding: 4px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; text-align: center; }
     .status-passed { background: var(--teal-light); color: var(--teal); }
     .status-failed { background: var(--red-light); color: var(--red); }
     .status-skipped { background: var(--amber-light); color: var(--amber); }
     footer { color: var(--muted); margin-top: 28px; font: 12px/1.5 Arial, sans-serif; }
-    @media (max-width: 720px) { .page { width: min(100% - 24px, 1180px); padding-top: 28px; } header { display: block; } .generated { margin-top: 16px; text-align: left; } .summary { grid-template-columns: repeat(2, 1fr); } .section-heading { align-items: flex-start; flex-direction: column; } }
+    @media (max-width: 720px) { .page { width: min(100% - 24px, 1180px); padding-top: 28px; } header { display: block; } .generated { margin-top: 16px; text-align: left; } .summary { grid-template-columns: repeat(2, 1fr); } .section-heading { align-items: flex-start; flex-direction: column; } table { min-width: 760px; } .table-wrap { padding-bottom: 4px; } }
   </style>
 </head>
 <body>

@@ -15,10 +15,13 @@ describe('MoveHistoryComponent', () => {
   });
 
   it('renders chronological move details', () => {
-    const entries = fixture.nativeElement.querySelectorAll('li');
+    const entries = fixture.nativeElement.querySelectorAll('tbody tr');
     expect(entries.length).toBe(2);
-    expect(entries[0].textContent).toContain('1. X');
-    expect(entries[0].textContent).toContain('row 1, column 3');
-    expect(entries[1].textContent).toContain('2. O');
+    expect(entries[0].querySelectorAll('td')[0].textContent).toBe('1');
+    expect(entries[0].querySelectorAll('td')[1].textContent).toBe('X');
+    expect(entries[0].querySelectorAll('td')[2].textContent).toBe('1');
+    expect(entries[0].querySelectorAll('td')[3].textContent).toBe('3');
+    expect(entries[1].querySelectorAll('td')[0].textContent).toBe('2');
+    expect(entries[1].querySelectorAll('td')[1].textContent).toBe('O');
   });
 });

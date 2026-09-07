@@ -1,1 +1,12 @@
-<section class="scoreboard"><div><b>{{ score.xWins }}</b><span>X wins</span></div><div><b>{{ score.oWins }}</b><span>O wins</span></div><div><b>{{ score.draws }}</b><span>Draws</span></div><button type="button" (click)="reset.emit()">Reset scoreboard</button></section>
+<section class="scoreboard">
+	<h2>Scoreboard</h2>
+	<table aria-label="Game scoreboard">
+		<thead>
+			<tr><th scope="col">X wins</th><th scope="col">O wins</th><th scope="col">Draws</th></tr>
+		</thead>
+		<tbody>
+			<tr><td><b>{{ score.xWins }}</b></td><td><b>{{ score.oWins }}</b></td><td><b>{{ score.draws }}</b></td></tr>
+		</tbody>
+	</table>
+	<button class="reset-button" type="button" (click)="reset.emit()">Reset scoreboard</button>
+</section>

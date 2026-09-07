@@ -1,1 +1,15 @@
-<ol class="history"><li *ngFor="let move of moves"><strong>{{ move.moveNumber }}. {{ move.player }}</strong><span>row {{ move.row + 1 }}, column {{ move.column + 1 }}</span></li></ol>
+<div class="history-table-wrap">
+	<table aria-label="Move history">
+		<thead>
+			<tr><th class="move-number" scope="col">Move</th><th class="player" scope="col">Player</th><th class="coordinate" scope="col">Row</th><th class="coordinate" scope="col">Column</th></tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let move of moves">
+				<td class="move-number">{{ move.moveNumber }}</td>
+				<td class="player">{{ move.player }}</td>
+				<td class="coordinate">{{ move.row + 1 }}</td>
+				<td class="coordinate">{{ move.column + 1 }}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
