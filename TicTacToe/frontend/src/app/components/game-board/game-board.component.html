@@ -1,0 +1,1 @@
+<section class="board" aria-label="Tic Tac Toe board"><button *ngFor="let cell of cells" class="cell" [class.winner]="winning(cell[0], cell[1])" [disabled]="disabled(cell[0], cell[1])" (click)="select(cell[0], cell[1])">{{ state.board[cell[0]][cell[1]] || '' }}</button></section>

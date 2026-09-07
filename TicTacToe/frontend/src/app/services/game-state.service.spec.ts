@@ -1,0 +1,7 @@
+import { TestBed } from '@angular/core/testing';
+import { of, throwError } from 'rxjs';
+import { GameApiService } from './game-api.service';
+import { GameStateService } from './game-state.service';
+const state = { gameId: '1', board: [[null,null,null],[null,null,null],[null,null,null]], currentPlayer: 'X' as const, mode: 'TwoPlayer' as const, status: 'InProgress' as const, winner: null, winningCells: [], moveHistory: [], scoreboard: { xWins: 0, oWins: 0, draws: 0 }, canUndo: false };
+describe('GameStateService', () => { it('replaces state only after a successful create', () => { const api = jasmine.createSpyObj<GameApiService>('GameApiService', { create: of(state) }); TestBed.configureTestingModule({ providers: [GameStateService, { provide: GameApiService, useValue: api }] }); const service = TestBed.inject(GameStateService); service.create('TwoPlayer'); service.state$.subscribe(value => expect(value).toEqual(state)); });
+  it('preserves state and exposes errors when an action fails', () => { const api = jasmine.createSpyObj<GameApiService>('GameApiService', { create: of(state), reset: throwError(() => ({ message: 'offline' })) }); TestBed.configureTestingModule({ providers: [GameStateService, { provide: GameApiService, useValue: api }] }); const service = TestBed.inject(GameStateService); service.create('TwoPlayer'); service.reset(); service.state$.subscribe(value => expect(value).toEqual(state)); service.error$.subscribe(value => expect(value).toBe('offline')); }); });
