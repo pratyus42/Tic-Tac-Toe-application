@@ -1,61 +1,191 @@
-# Local Tic Tac Toe
+# Tic Tac Toe Application
 
-A small browser Tic Tac Toe assessment solution. The Angular standalone client renders backend snapshots; the .NET 8 Web API owns rules, history, game state, deterministic computer play, and the in-memory session scoreboard.
+## 1. Project overview
 
-## Stack and setup
+ Tic Tac Toe Application is a browser game with a standalone Angular frontend and a .NET Web API backend. The backend is authoritative for board state, turns, validation, win/draw detection, move history, computer moves, undo behavior, and the session scoreboard. The application is intended for local assessment and demonstration use.
 
-Prerequisites: .NET 8 SDK, Node.js 20+, and npm. The backend listens on `http://localhost:5050`; Angular runs on `http://localhost:4200`.
+## 2. Tech stack
+
+- .NET 8 ASP.NET Core Web API
+- C# domain and service layer
+- xUnit and ASP.NET Core test hosting for backend tests
+- Angular 18 standalone components
+- TypeScript and RxJS
+- Karma/Jasmine for Angular tests
+- Swashbuckle for Swagger/OpenAPI documentation
+- In-memory storage with no external database
+
+## 3. Features implemented
+
+- Two-player mode and deterministic computer mode
+- 3 x 3 board with row, column, and diagonal win detection
+- Draw detection and winning-cell highlighting
+- Backend validation for invalid coordinates, occupied cells, wrong turns, and completed games
+- Chronological move history with player, move number, row, and column
+- Reset Game without changing the scoreboard
+- Mode-specific undo: one move in TwoPlayer mode and the latest X/O pair in Computer mode
+- Option A behavior: undo is unavailable after a win or draw
+- Deterministic computer priority: winning move, block, center, corners, then row-major fallback
+- Scoreboard display and scoreboard reset
+- Responsive Angular UI with disabled and highlighted states
+- Swagger UI for interactive API testing
+
+## 4. Run the backend locally
+
+Prerequisite: install the .NET 8 SDK and confirm it is available with `dotnet --version`.
+
+1. Open a terminal.
+2. Change to your local repository root, the folder containing `README.md`, `backend`, and `frontend`. Replace the placeholder below with the path to your own checkout:
+
+	```powershell
+	cd "<your-local-repository-path>"
+	```
+
+3. Restore backend dependencies:
+
+	```powershell
+	dotnet restore backend\TicTacToe.sln
+	```
+
+4. Start the API:
+
+	```powershell
+	dotnet run --project backend\TicTacToe.Api
+	```
+
+5. Leave this terminal running. A successful startup displays a message similar to:
+
+	```text
+	Now listening on: http://localhost:5050
+	```
+
+The API base URL is [http://localhost:5050](http://localhost:5050). Swagger UI is available at [http://localhost:5050/swagger](http://localhost:5050/swagger), and the raw OpenAPI document is available at [http://localhost:5050/swagger/v1/swagger.json](http://localhost:5050/swagger/v1/swagger.json).
+
+To stop the backend, return to its terminal and press `Ctrl+C`.
+
+## 5. Run the frontend locally
+
+Prerequisites: install Node.js 20 or newer, which includes npm. Confirm both are available with `node --version` and `npm.cmd --version`.
+
+Use a second terminal while the backend terminal remains running:
+
+1. From the repository root, install frontend dependencies once:
+
+	```powershell
+	cd "<your-local-repository-path>\frontend"
+	npm.cmd install
+	```
+
+2. Start Angular:
+
+	```powershell
+	npm.cmd start
+	```
+
+3. Leave this terminal running. A successful startup displays a local URL similar to:
+
+	```text
+	Local: http://localhost:4200/
+	```
+
+4. Open [http://localhost:4200](http://localhost:4200) in a browser. The page should load the game from the API running on port `5050`.
+
+The frontend expects the backend at `http://localhost:5050`; local CORS allows requests from `http://localhost:4200`. To stop Angular, return to its terminal and press `Ctrl+C`.
+
+### Run the complete application
+
+Reviewers need two terminals:
+
+**Terminal 1, backend:**
 
 ```powershell
-cd backend
-dotnet run --project TicTacToe.Api
-# in another terminal
+cd "<your-local-repository-path>"
+dotnet run --project backend\TicTacToe.Api
+```
+
+**Terminal 2, frontend:**
+
+```powershell
+cd "<your-local-repository-path>\frontend"
+npm.cmd install
+npm.cmd start
+```
+
+Then use the browser UI at `http://localhost:4200` or test the API interactively at `http://localhost:5050/swagger`.
+
+## 6. API endpoint summary
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `POST` | `/api/games` | Create a `TwoPlayer` or `Computer` game |
+| `GET` | `/api/games/{gameId}` | Get complete authoritative game state |
+| `POST` | `/api/games/{gameId}/moves` | Submit a player move |
+| `POST` | `/api/games/{gameId}/undo` | Undo the latest valid action |
+| `POST` | `/api/games/{gameId}/reset` | Reset one game while preserving its scoreboard |
+| `GET` | `/api/scoreboard` | Get session scoreboard totals |
+| `POST` | `/api/scoreboard/reset` | Reset scoreboard totals without changing games |
+
+Create-game request:
+
+```json
+{
+	"mode": "TwoPlayer"
+}
+```
+
+Move request. Rows and columns are zero-based and must be between `0` and `2`:
+
+```json
+{
+	"player": "X",
+	"row": 0,
+	"column": 0
+}
+```
+
+Successful game responses include `gameId`, `board`, `currentPlayer`, `mode`, `status`, `winner`, `winningCells`, `moveHistory`, `scoreboard`, and `canUndo`. Invalid requests return `400`, unknown games return `404`, and unavailable undo returns `409` with an `UndoUnavailable` error code. Error responses use `{ "code": "...", "message": "..." }`.
+
+## 7. Run tests and generate reports
+
+Backend tests:
+
+```powershell
+dotnet test backend/TicTacToe.sln --results-directory reports\backend --logger "console;verbosity=normal" --logger "trx;LogFileName=backend-tests.trx"
+```
+
+Frontend tests and report:
+
+```powershell
 cd frontend
-npm install
-npm start
+npm.cmd test -- --progress=false --browsers=ChromeHeadless
+npm.cmd run test:report
 ```
 
-Tests and builds:
+The backend test result displays the number of passed, failed, skipped, and total
+tests. The frontend test command runs once in headless Chrome and displays
+`Executed X of X` in the result. 
+Generated reports are ignored by git.
 
-```powershell
-dotnet build backend/TicTacToe.sln
-dotnet test backend/TicTacToe.sln
-cd frontend; npm run build; npm test
-```
+Report files:
 
-## Features
+- Backend: `reports\backend\backend-tests.trx`
+- Frontend: `reports\frontend\frontend-tests.xml`
+- Combined HTML: `reports\test-report.html`
 
-Two-player and deterministic computer mode, row/column/diagonal wins, draws, chronological move history, winning-cell highlights, reset game, mode-specific undo, scoreboard reset, invalid-move protection, and local CORS. Computer mode plays X for the human and O for the computer. O prioritizes a winning move, then blocks X, center, corners in top-left/top-right/bottom-left/bottom-right order, then the first row-major cell.
+Open `reports\test-report.html` in a browser for a combined, visually formatted
+report with summary cards and aligned backend/frontend test tables. 
+Run the
+backend and frontend test commands first so the source reports are current.
 
-Undo follows Option A: it is unavailable after Won or Draw. In TwoPlayer mode it removes one move; in Computer mode it removes the latest O and preceding X pair. Reset game keeps the game ID but replaces its state and preserves the scoreboard.
+## 8. Known limitations
 
-## API and Swagger
+- Game and scoreboard data are lost when the API process restarts.
+- There is no authentication, authorization, persistent database, or multi-user isolation.
+- The computer strategy is deterministic and intentionally lightweight rather than adaptive.
+- The API and frontend are configured for local development rather than production deployment.
+- No automated browser end-to-end test suite is included.
 
-When the backend runs in the Development environment, Swagger UI is available at [http://localhost:5050/swagger](http://localhost:5050/swagger). It lists every game and scoreboard endpoint, JSON request/response schema, route parameter, validation error, and documented HTTP status code. Use `Try it out` in Swagger UI to create a game, copy its `gameId`, and test the remaining calls locally.
-
-- `POST /api/games` body `{ "mode": "TwoPlayer" | "Computer" }`
-- `GET /api/games/{gameId}`
-- `POST /api/games/{gameId}/moves` body `{ "player": "X", "row": 0, "column": 0 }`
-- `POST /api/games/{gameId}/undo`
-- `POST /api/games/{gameId}/reset`
-- `GET /api/scoreboard`
-- `POST /api/scoreboard/reset`
-
-Successful game responses include `gameId`, a 3x3 `board`, `currentPlayer`, `mode`, `status`, `winner`, `winningCells`, `moveHistory`, `scoreboard`, and `canUndo`. Invalid moves return `400` with `{ code, message }`; unknown games return `404`; unavailable undo returns `409` with `UndoUnavailable`.
-
-## Design and assumptions
-
-The singleton `InMemoryGameStore` is intentionally session-scoped and is cleared when the API restarts. A lock protects compound game and scoreboard mutations. The frontend never infers winners, turns, computer moves, or scores; failed requests leave the last valid state visible. CORS allows only the documented Angular origin. There is no persistence, authentication, multi-user isolation, or production deployment configuration.
-
-## Known limitations and future improvements
-
-The application is local-only, stores one in-memory session, and has no authentication, persistence, multi-user isolation, or production deployment configuration. Future improvements could add durable storage, player sessions, richer computer strategy, and production hosting configuration.
-
-## AI workflow summary
-
-AI assistance was used to turn the approved specification into a narrow domain service, DTO boundary, REST controllers, Angular components, and focused tests. Manual review concentrated on exact endpoint names, unchanged state on invalid moves, exactly-once completion scoring, computer priority order, Option A undo, and CORS. Trade-offs favor readable fixed-size algorithms and no external state-management or persistence dependencies.
-
-## Verification checklist
+## 9. Verification checklist
 
 - [ ] Start both local processes and create each mode.
 - [ ] Verify valid turns, occupied/out-of-range/wrong-player errors, and history.

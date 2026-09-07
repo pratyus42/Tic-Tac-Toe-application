@@ -13,7 +13,7 @@ describe('ScoreboardComponent', () => {
 
   it('renders scoreboard values', () => {
     const values = fixture.nativeElement.querySelectorAll('b');
-    expect(Array.from(values).map((value: Element) => value.textContent)).toEqual(['2', '1', '3']);
+    expect(Array.from(values as NodeListOf<Element>).map((value) => value.textContent)).toEqual(['2', '1', '3']);
   });
 
   it('emits reset when the reset button is clicked', () => {
