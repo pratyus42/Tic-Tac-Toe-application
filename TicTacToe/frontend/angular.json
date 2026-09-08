@@ -52,7 +52,6 @@
       }
     }
   },
-  "defaultProject": "tic-tac-toe",
   "cli": {
     "analytics": false
   }
