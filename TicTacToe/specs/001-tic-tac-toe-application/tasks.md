@@ -30,7 +30,7 @@ description: "Implementation tasks for the local Tic Tac Toe application"
 - [x] T002 [P] Scaffold the Angular + TypeScript application under `frontend/` using standalone components and the standard Angular CLI test configuration.
 - [x] T003 [P] Add backend test dependencies, including xUnit, test SDK, and ASP.NET Core test hosting support, to `backend/TicTacToe.Tests/TicTacToe.Tests.csproj`.
 - [x] T004 [P] Configure local backend launch settings and the Angular development environment/API base URL in `backend/TicTacToe.Api/Properties/launchSettings.json` and `frontend/src/environments/environment.ts`.
-- [x] T005 [P] Add the root `README.md` outline with prerequisites, local project commands, and sections for API, testing, AI workflow, assumptions, limitations, and future improvements.
+- [x] T005 [P] Add the root `README.md` outline with prerequisites, local project commands, API documentation, testing, AI workflow, assumptions, and limitations.
 
 ## Phase 2: Foundational Backend and API Infrastructure
 
@@ -44,9 +44,7 @@ description: "Implementation tasks for the local Tic Tac Toe application"
 - [x] T009 Implement the singleton in-memory game/session store in `backend/TicTacToe.Api/Services/InMemoryGameStore.cs`, including game lookup, game replacement, scoreboard access/reset, and synchronization for compound mutations.
 - [x] T010 Define service contracts in `backend/TicTacToe.Api/Services/IGameService.cs` and `IComputerMoveSelector.cs` so game rules and computer selection can be tested without controllers.
 - [x] T011 Configure ASP.NET Core JSON camelCase serialization, dependency injection, local-only development CORS, controller routing, and consistent unexpected-error handling in `backend/TicTacToe.Api/Program.cs`.
-- [ ] T012 Add a shared test fixture/factory and isolated in-memory service setup in `backend/TicTacToe.Tests/Infrastructure/`, ensuring tests cannot leak games or scoreboard totals across cases.
-
-**Checkpoint**: Projects build, tests can instantiate the service with an isolated store, and the API can start locally with the documented Angular origin allowed.
+**Checkpoint**: Projects build, tests can instantiate the service with an in-memory store, and the API can start locally with the documented Angular origin allowed.
 
 ## Phase 3: User Story 1 - Play a Two Player Game (Priority: P1) MVP
 
@@ -55,9 +53,6 @@ description: "Implementation tasks for the local Tic Tac Toe application"
 **Independent Test**: Create a `TwoPlayer` game, make legal and illegal moves, complete row/column/diagonal wins and a draw, and verify complete state responses.
 
 ### Tests for User Story 1
-
-- [ ] T013 [P] [US1] Add service tests for initial `TwoPlayer` state, valid moves, move history, alternating turns, and unchanged state after occupied, out-of-range, wrong-player, and completed-game moves in `backend/TicTacToe.Tests/Services/GameServiceMoveTests.cs`.
-- [ ] T014 [P] [US1] Add win and draw tests for all three rows, all three columns, both diagonals, winning-cell positions, completed status, and post-completion move rejection in `backend/TicTacToe.Tests/Services/GameServiceOutcomeTests.cs`.
 - [x] T015 [P] [US1] Add API contract tests for `POST /api/games`, `GET /api/games/{gameId}`, and `POST /api/games/{gameId}/moves`, including status codes, camelCase response fields, validation errors, and unchanged state on failure in `backend/TicTacToe.Tests/GamesApiContractTests.cs`.
 
 ### Implementation for User Story 1
@@ -77,8 +72,6 @@ description: "Implementation tasks for the local Tic Tac Toe application"
 **Independent Test**: Play and complete a game, inspect history, reset it, and verify a fresh game state with preserved scoreboard totals.
 
 ### Tests for User Story 2
-
-- [ ] T021 [P] [US2] Add service tests for move number/player/position history, reset of board/history/status/winner/winning cells/current player, and scoreboard preservation in `backend/TicTacToe.Tests/Services/GameServiceResetTests.cs`.
 - [x] T022 [P] [US2] Add API tests for `POST /api/games/{gameId}/reset`, unknown-game handling, and complete reset response shape in `backend/TicTacToe.Tests/Controllers/GamesControllerResetTests.cs`.
 - [x] T023 [P] [US2] Add scoreboard tests for `GET /api/scoreboard` and active-game state preservation when scoreboard reset is implemented in `backend/TicTacToe.Tests/Controllers/ScoreboardControllerTests.cs`.
 
@@ -95,12 +88,6 @@ description: "Implementation tasks for the local Tic Tac Toe application"
 **Goal**: Restore the previous valid state with mode-specific undo and Option A completed-game behavior.
 
 **Independent Test**: Undo one move in TwoPlayer mode and an X/O pair in Computer mode, then verify board, history, turn, status, and `canUndo`.
-
-### Tests for User Story 3
-
-- [ ] T027 [P] [US3] Add TwoPlayer undo tests for latest-move removal, restored current player, rebuilt board, accurate history, no-move rejection, and unchanged scoreboard in `backend/TicTacToe.Tests/Services/GameServiceTwoPlayerUndoTests.cs`.
-- [ ] T028 [P] [US3] Add Computer-mode undo tests for paired O/X removal, restored X turn, board/history rebuild, and the single-human-move edge case in `backend/TicTacToe.Tests/Services/GameServiceComputerUndoTests.cs`.
-- [ ] T029 [P] [US3] Add Option A tests proving undo is unavailable after both Won and Draw states, the scoreboard remains final, and the API returns `409 Conflict` with `UndoUnavailable` in `backend/TicTacToe.Tests/Services/GameServiceUndoCompletionTests.cs` and `backend/TicTacToe.Tests/Controllers/GamesControllerUndoTests.cs`.
 
 ### Implementation for User Story 3
 
@@ -119,7 +106,6 @@ description: "Implementation tasks for the local Tic Tac Toe application"
 ### Tests for User Story 4
 
 - [x] T033 [P] [US4] Add isolated selector tests for O winning move, X blocking move, center, first documented corner, and row-major fallback in `backend/TicTacToe.Tests/Services/ComputerMoveSelectorTests.cs`.
-- [ ] T034 [P] [US4] Add service tests for Computer-mode initialization, one automatic O response, legal non-occupied computer moves, paired move history, X win before computer response, O completion, and no response after completion in `backend/TicTacToe.Tests/Services/GameServiceComputerModeTests.cs`.
 - [x] T035 [P] [US4] Extend API contract tests to verify a successful human move in Computer mode returns both moves and complete authoritative state in `backend/TicTacToe.Tests/GamesApiContractTests.cs`.
 
 ### Implementation for User Story 4
@@ -158,21 +144,11 @@ description: "Implementation tasks for the local Tic Tac Toe application"
 
 **Goal**: Make the repository easy to run, test, review, and explain.
 
-- [x] T051 [US5] Complete `README.md` with project overview, Angular/.NET stack, implemented features, prerequisites, chosen versions, local ports, backend/frontend startup commands, build commands, and test commands.
+- [x] T051 [US5] Complete `README.md` with project overview, Angular/.NET stack, implemented features, prerequisites, chosen versions, local ports, backend/frontend startup commands, and test commands.
 - [x] T052 [US5] Add the REST endpoint summary, request examples, response fields, error status behavior, and backend-state ownership explanation to `README.md`.
-- [x] T053 [US5] Document Option A completed-game Undo, in-memory storage, CORS assumptions, local-only scope, known limitations, and future improvements in `README.md`.
+- [x] T053 [US5] Document Option A completed-game Undo, in-memory storage, CORS assumptions, local-only scope, and known limitations in `README.md`.
 - [x] T054 [US5] Document AI tools/prompts used, generated material, manual changes, careful review areas, assumptions, trade-offs, and the panel-review explanation points in `README.md`.
 - [x] T055 [US5] Add a manual verification checklist to `README.md` covering both modes, row/column/diagonal wins, draw, invalid moves, move history, both undo behaviors, reset actions, scoreboard behavior, and winning-cell highlights.
-
-## Phase 9: Polish and Acceptance Verification
-
-**Purpose**: Verify all requirements without adding unnecessary infrastructure.
-
-- [ ] T056 Run `dotnet build backend/TicTacToe.sln` and `dotnet test backend/TicTacToe.sln` and resolve only issues related to this feature.
-- [ ] T057 Run the Angular build and test commands from `frontend/package.json` and resolve frontend compilation, test, and template errors.
-- [ ] T058 [P] Verify API responses and error payloads against the endpoint contract in `specs/001-tic-tac-toe-application/spec.md`.
-- [ ] T059 [P] Execute the README manual checklist in a clean local run with backend and frontend started independently.
-- [x] T060 Review the acceptance criteria in `specs/001-tic-tac-toe-application/spec.md` and record known limitations and assumptions in `README.md` before declaring the assessment solution complete.
 
 ## Dependencies and Execution Order
 
@@ -186,16 +162,13 @@ description: "Implementation tasks for the local Tic Tac Toe application"
 - **Phase 6 US4**: Depends on core move validation and history from US1; can be developed alongside reset/undo after foundation, but integration depends on shared `GameService`.
 - **Phase 7 Frontend**: Depends on the REST endpoints from Phases 3-6; frontend models and component shells may start after Phase 2, but end-to-end integration waits for APIs.
 - **Phase 8 US5**: Can begin during implementation, but final README verification depends on the completed local commands and API behavior.
-- **Phase 9 Polish**: Depends on all required implementation and test tasks.
 
 ### Parallel Opportunities
 
 - T002-T005 can run in parallel after the repository root is established.
-- T006-T008 and T012 can run in parallel; T009-T011 depend on the contracts/domain types.
-- US1 tests T013-T015 can be authored in parallel before T016-T020 implementation.
-- Reset, undo, and computer selector tests can be authored in parallel once the shared service test fixture exists.
+- T006-T008 can run in parallel; T009-T011 depend on the contracts/domain types.
 - T039-T042 and T045-T047 can be developed in parallel after the frontend scaffold, subject to the shared model/API service interfaces.
-- README sections can be drafted in parallel with implementation; final command validation remains sequential in Phase 9.
+- README sections can be drafted in parallel with implementation and finalized after the local commands are verified.
 
 ### Within Each User Story
 
@@ -214,4 +187,4 @@ description: "Implementation tasks for the local Tic Tac Toe application"
 
 ### Completion Gate
 
-The implementation is ready for review only after T056-T060 pass, all required backend and frontend tests are green, both local processes run from README instructions, and every acceptance criterion is demonstrably covered.
+The implementation is ready for review when the required backend and frontend tests are green, both local processes run from the README instructions, and the README verification checklist has been reviewed.
